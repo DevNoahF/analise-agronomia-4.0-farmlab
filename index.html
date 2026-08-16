@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroInsight 4.0 · Diagnóstico de Produtividade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🌱</span>
+      <div>
+        <h1>AgroInsight <span>4.0</span></h1>
+        <p>Inteligência Agronômica de Dados de Campo</p>
+      </div>
+    </div>
+    <div class="periode">
+      <span class="dot"></span>
+      Safra 2025/2026 · Talhão Experimental Unimar
+    </div>
+    <button class="btn-print" id="btn-export" type="button" title="Gerar relatório em PDF">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 9V2h12v7"></path>
+        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+        <rect x="6" y="14" width="12" height="8"></rect>
+      </svg>
+      Exportar PDF
+    </button>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Diagnóstico Agronômico · Cultura: Milho</p>
+        <h2>Por que a lavoura <em>não está rendendo</em>?</h2>
+        <p class="hero-text">
+          Cruzamento dos dados de sensores de máquinas, estações meteorológicas, armadilhas de
+          pragas (IoT) e mapas de operação agrícola — a leitura da <strong>Agricultura 4.0</strong> aponta
+          falhas operacionais e fitossanitárias que explicam a queda de produtividade da safra.
+        </p>
+        <div class="hero-meta">
+          <span><strong style="color:var(--amber)">4</strong> dimensões analisadas</span>
+          <span><strong style="color:var(--amber)">11</strong> arquivos de telemetria</span>
+          <span><strong style="color:var(--amber)">10.7k</strong> eventos de campo</span>
+        </div>
+      </div>
+      <div class="hero-gauge">
+        <div class="gauge" id="prod-gauge"></div>
+        <p class="gauge-label">Índice de Risco de Produtividade</p>
+      </div>
+    </section>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section class="section" id="diagnostico">
+      <div class="section-head">
+        <span class="step">01</span>
+        <div>
+          <h3>Diagnóstico Principal</h3>
+          <p>As causas-raiz da baixa produtividade, ordenadas por impacto.</p>
+        </div>
+      </div>
+      <div class="causes" id="causes"></div>
+    </section>
+
+    <section class="section" id="secao-clima">
+      <div class="section-head">
+        <span class="step">02</span>
+        <div>
+          <h3>Clima &amp; Ambiente</h3>
+          <p>Estresse térmico, chuva e suas janelas de manejo.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Chuva mensal acumulada (mm)</h4><div class="chart" id="chart-chuva-mes"></div></div>
+        <div class="card"><h4>Temperatura média por mês (°C)</h4><div class="chart" id="chart-temp-mes"></div></div>
+        <div class="card full"><h4>Série diária — temperatura (área) e chuva (barras)</h4><div class="chart" id="chart-clima-diario"></div></div>
+      </div>
+      <div class="insights" id="insights-clima"></div>
+    </section>
+
+    <section class="section" id="secao-fertilizacao">
+      <div class="section-head">
+        <span class="step">03</span>
+        <div>
+          <h3>Nutrição do Solo (Fertilização)</h3>
+          <p>Dose aplicada pela máquina versus dose configurada pelo agrônomo.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Dose média aplicada vs. configurada (kg/ha)</h4><div class="chart" id="chart-fert"></div></div>
+        <div class="card"><h4>Conformidade das aplicações (%)</h4><div class="chart" id="chart-fert-comp"></div></div>
+        <div class="card full"><h4>Detalhe por operação</h4><table class="table" id="tabela-fert"></table></div>
+      </div>
+      <div class="insights" id="insights-fert"></div>
+    </section>
+
+    <section class="section" id="secao-pulverizacao">
+      <div class="section-head">
+        <span class="step">04</span>
+        <div>
+          <h3>Pulverização &amp; Defensivos</h3>
+          <p>Pressão do sistema hidráulico durante as aplicações de calda.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Pressão registrada no sistema (psi)</h4><div class="chart" id="chart-pressure"></div></div>
+        <div class="card"><h4>Registros por operação de pulverização</h4><div class="chart" id="chart-spray-ops"></div></div>
+      </div>
+      <div class="banner-danger" id="banner-pressure"></div>
+      <div class="insights" id="insights-spray"></div>
+    </section>
+
+    <section class="section" id="secao-maquinas">
+      <div class="section-head">
+        <span class="step">05</span>
+        <div>
+          <h3>Eficiência Operacional das Máquinas</h3>
+          <p>Alertas de telemetria: ociosidade, rotação e velocidade de operação.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Tipos de alertas registrados</h4><div class="chart" id="chart-alerts"></div></div>
+        <div class="card"><h4>Alertas por operação agrícola</h4><div class="chart" id="chart-alerts-op"></div></div>
+      </div>
+      <div class="insights" id="insights-maquinas"></div>
+    </section>
+
+    <section class="section" id="secao-pragas">
+      <div class="section-head">
+        <span class="step">06</span>
+        <div>
+          <h3>Monitoramento Fitossanitário (IoT)</h3>
+          <p>Capturas das armadilhas inteligentes e níveis de infestação.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h4>Insetos capturados por espécie</h4><div class="chart" id="chart-pragas-donut"></div></div>
+        <div class="card"><h4>Evolução das capturas diárias</h4><div class="chart" id="chart-pragas-serie"></div></div>
+        <div class="card full"><h4>Nível de infestação das armadilhas</h4><div class="chart" id="chart-pragas-nivel"></div></div>
+      </div>
+      <div class="insights" id="insights-pragas"></div>
+    </section>
+
+    <section class="section" id="secao-recomendacoes">
+      <div class="section-head">
+        <span class="step">07</span>
+        <div>
+          <h3>Recomendações — Plano de Ação 4.0</h3>
+          <p>Ações priorizadas para recuperar a produtividade na próxima safra.</p>
+        </div>
+      </div>
+      <div class="recos" id="recomendacoes"></div>
+    </section>
+
+    <footer class="footer">
+      <p>
+        Painel demonstrativo gerado a partir dos arquivos da pasta <code>data</code>.
+        Fonte: telemetria de máquinas, estação meteorológica e armadilhas IoT (Unimar Pesquisa · safra 2025/2026).
+        Valores apresentados em base horária/diária agregada.
+      </p>
+    </footer>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
